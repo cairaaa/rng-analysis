@@ -1,0 +1,8 @@
+project:
+  type: default
+
+# execute:
+#   freeze: auto
+#   echo: false
+#   warning: false
+#   message: false
