@@ -4,6 +4,7 @@ _output/
 .venv/
 index_files/
 private/
+*.egg-info/
 
 **/*.html
 **/*.quarto_ipynb
