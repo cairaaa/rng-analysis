@@ -1,0 +1,29 @@
+---
+title: Evaluating the Randomness of a Minigame Selection System
+format: 
+  html:
+    code-fold: true
+    theme: flatly
+---
+
+## Introduction
+
+
+
+
+## Methodology
+
+
+
+
+## Results
+
+
+
+
+## Discussion
+
+
+
+
+## Conclusion
