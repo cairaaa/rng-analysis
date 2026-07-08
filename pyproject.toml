@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rng-analysis"
+version = "0.1.0"
+requires-python = ">=3.12"
+readme = "README.md"
+license = "MIT"
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "scipy"
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "jupyter"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rng_analysis"]
+
+[tool.ruff]
+extend-exclude = [
+    "private/**"
+]
+
+[tool.ruff.lint]
+select = [
+    "ANN", 
+    "B", 
+    "C4", 
+    "E", 
+    "F", 
+    "I", 
+    "Q",
+    "SIM",
+    "UP"
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pyright]
+exclude = [
+    "**/node_modules", 
+    "**/__pycache__", 
+    ".git", 
+    "**/build", 
+    "env/**", 
+    ".venv", 
+    "**/.*", 
+    "private/**"
+]
