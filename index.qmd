@@ -8,8 +8,28 @@ format:
 
 ## Introduction
 
+Randomness is an essential component of many modern video games. From determining item
+spawns to selecting maps and minigames, randomization majorly influences an individual’s
+overall experience with the game. Since random processes can produce streaks and uneven
+outcomes, the human mind may interpret that as meaning certain outcomes appear more than
+others; however, it can be difficult to determine whether these patterns are a result of
+actual bias or simply chance. This is where statistics becomes essential, as it provides
+objective methods for determining whether the observed patterns are from bias or random
+variation.
 
+One application of this question is in the video game *Hypixel Party Games*, where
+players have speculated whether certain minigames were selected more than others. This
+video game features 26 possible minigames, which 8 are selected per game session, each
+theoretically having an equal chance of being selected. Using 10 independent samples
+with around 325 games (2600 minigame selections) per sample, this analysis tests whether
+the observed distribution is consistent with this expectation. If the game’s selection
+was random, each minigame should appear at the expected frequency over a large amount of
+games. The hypotheses are: 
 
+* **Null hypothesis ($H_0$)**: The distribution of minigame selections follows the
+expected uniform distribution under random selection. 
+* **Alternate hypothesis ($H_1$)**: The distribution of minigame selections differs from
+the expected uniform distribution under random selection.
 
 ## Methodology
 
