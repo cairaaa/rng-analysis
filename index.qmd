@@ -6,16 +6,16 @@ format:
     theme: flatly
 ---
 
-## Introduction
+## 1 Introduction
 
 Randomness is an essential component of many modern video games. From determining item
 spawns to selecting maps and minigames, randomization majorly influences an individual’s
-overall experience with the game. Since random processes can produce streaks and uneven
-outcomes, the human mind may interpret that as meaning certain outcomes appear more than
-others; however, it can be difficult to determine whether these patterns are a result of
-actual bias or simply chance. This is where statistics becomes essential, as it provides
-objective methods for determining whether the observed patterns are from bias or random
-variation.
+overall experience with a video game. Since random processes can produce streaks and
+uneven outcomes, the human mind may interpret that as meaning certain outcomes appear
+more than others; however, it can be difficult to determine whether these patterns are a
+result of actual bias or simply chance. This is where statistics becomes essential, as
+it provides objective methods for determining whether the observed patterns are from
+bias or random variation.
 
 One application of this question is in the video game *Hypixel Party Games*, where
 players have speculated whether certain minigames were selected more than others. This
@@ -31,19 +31,115 @@ expected uniform distribution under random selection.
 * **Alternate hypothesis ($H_1$)**: The distribution of minigame selections differs from
 the expected uniform distribution under random selection.
 
-## Methodology
+## 2 Methodology
+
+This study investigated whether the minigame selection in Hypixel Party Games produces
+outcomes that are consistent with a uniform random distribution. Data were collected
+across 10 independent trials. The sequence of minigames selected in each game was
+extracted using optical character recognition (OCR); then, it was cleaned and compiled
+into a structured dataset. The dataset was then analyzed in Python using a chi-square
+goodness of fit test, corrected using a Monte Carlo simulation due to the
+non-independent variables.
+
+### 2.1 Data collection
+
+Data were collected over multiple gameplay sessions and organized into 10 different
+independent trials. To maximize the number of games collected within a feasible
+timeframe, the data were collected by entering a game session, waiting for the game to
+start, and then leaving without playing repeatedly for around 325 games. After all of
+the games were collected, the replay feature on Hypixel was utilized in order to
+determine the 8 minigames chosen in each individual game. This approach avoided the time
+cost of completing all 8 minigames per game while still efficiently collecting the full
+minigame sequence.
+
+An automated data collection was programmed in order to reduce manual transcription and
+improve accuracy. The program used OCR to extract the minigame names displayed on screen
+during each replay. To ensure the accuracy of the OCR, extracted text was validated
+against a reference list of each of the 26 possible minigame names; any output that did
+not match an entry in this list was flagged as an OCR error and corrected manually.
+Since the minigame names are very visually distinct from each other, the risk of one
+minigame being misclassified as another is unlikely. Finally, for each minigame, the
+trial number, game number, slot number, timestamp, and selected minigame were recorded
+in a comma-separated values (CSV) file, allowing use for statistical analysis in Python.
+
+Before analysis, the data from the CSV was imported into the pandas library from Python
+in order to clean the data before statistical testing. The dataset was inspected for
+missing, duplicate, and invalid records. Any incomplete or incorrectly recorded games
+were removed before statistical testing. After removing 44 incomplete or incorrectly
+recorded games, 3,318 games remained for statistical analysis, representing 26,544
+individual minigame observations (3,318 games $\times$ 8 minigames per game).
+
+### 2.2 Dataset structure
+
+The collected data was organized into a CSV file containing the following columns:
+
+| Column Name     | Description                                         |
+| :-------------- | :-------------------------------------------------- |
+| **trial**       | The trial in which the game was recorded.           |
+| **game_number** | The sequential game number within each trial.       |
+| **slot**        | The position of the minigame within the game (1-8). |
+| **timestamp**   | The recorded start time of the game.                |
+| **minigame**    | The name of the selected minigame.                  |
+
+Each row represents one minigame observation. This format preserved the original data
+while making it easier to summarize, filter, and analyze the data. 
+
+### 2.3 Statistical analysis
+The language Python was used along with the libraries numpy and pandas for the
+statistical analysis. Analyses were performed at two different levels: separately for
+each of the 10 individual trials, and for the combined dataset across all trials. This
+allowed for an assessment of consistency across individual trials as well as an overall
+test using the full combined sample.
+
+Consistent with the hypotheses above, the null hypothesis states that each of the 26
+minigames is equally likely to be chosen, meaning that $p_i = 1/26$ for $i = 1,...,26$,
+while the alternate hypothesis states that at least one minigame has a selection
+probability of $p_i \neq 1/26$. These hypotheses were evaluated separately for each
+individual trial and for the combined dataset. A significance level of $\alpha = 0.05$
+was used in all tests.
+
+A chi-square goodness of fit was utilized in order to compare whether the observed
+distribution significantly differs from $H_0$:
+
+$$
+\chi^2 = \sum_{i=1}^{26} \frac{(O_i - E_i)^2}{E_i}
+$$
+
+where $O_i$ represents the observed times minigame $i$ was selected, and $E_i$ is the
+expected count under $H_0$. For a sample of $N$ games, the expected count for each
+minigame in this experiment would be $E_i = N \times 8/26$.
+
+The standard chi-square goodness of fit test assumes that each and every observation is
+fully independent. However, this assumption does not apply to this experiment, as 8
+minigames are chosen from 26 minigames without replacement. This introduces dependent
+observations into the statistical test, reducing the variation within the distribution,
+causing the value of the chi-square statistic ($\chi^2$) to decrease while inflating the
+standard p value.
+
+In order to account for this, a Monte Carlo simulation was performed to approximate the
+value of $\chi^2$ performed under the null hypothesis. The simulation repeatedly
+generated $N$ simulated games (100,000 iterations per test), where $N$ matched the
+sample size of the trial or combined dataset being tested. Each simulated game consisted
+of 8 minigames drawn without replacement from the 26 total options, mirroring the actual
+selection process. A random seed value of 42 was used in numpy across all simulations to
+ensure consistency and reproducibility. The corrected p value was then calculated by
+comparing the amount of simulated $\chi^2$ values that were greater than or equal to the
+actual observed chi-square value:
+
+$$
+p = \frac{(\text{number of simulated } X^2 \geq X^2_{obs}) + 1}{100,000 + 1}
+$$
+
+This corrected p value accounts for the dependence between minigame selections (a hypergeometric-type process) within a game, unlike the standard chi-square p value, which assumes independence.
+
+## 3 Results
 
 
 
 
-## Results
+## 4 Discussion
 
 
 
 
-## Discussion
-
-
-
-
-## Conclusion
+## 5 Conclusion
