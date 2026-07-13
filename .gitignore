@@ -1,6 +1,8 @@
 __pycache__/
+_freeze/
 _output/
 /.quarto/
+.jupyter_cache/
 .venv/
 index_files/
 private/
@@ -8,3 +10,4 @@ private/
 
 **/*.html
 **/*.quarto_ipynb
+**/*.quarto_ipynb*
