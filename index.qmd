@@ -6,6 +6,13 @@ format:
     theme: flatly
 ---
 
+```{python}
+#| label: initial-setup
+#| echo: false
+
+import pandas as pd
+```
+
 ## 1 Introduction
 
 Randomness is an essential component of many modern video games. From determining item
@@ -33,7 +40,7 @@ the expected uniform distribution under random selection.
 
 ## 2 Methodology
 
-This study investigated whether the minigame selection in Hypixel Party Games produces
+This study investigated whether the minigame selection in *Hypixel Party Games* produces
 outcomes that are consistent with a uniform random distribution. Data were collected
 across 10 independent trials. The sequence of minigames selected in each game was
 extracted using optical character recognition (OCR); then, it was cleaned and compiled
@@ -41,13 +48,13 @@ into a structured dataset. The dataset was then analyzed in Python using a chi-s
 goodness of fit test, corrected using a Monte Carlo simulation due to the
 non-independent variables.
 
-### 2.1 Data collection
+### 2.1 Data Collection
 
 Data were collected over multiple gameplay sessions and organized into 10 different
 independent trials. To maximize the number of games collected within a feasible
 timeframe, the data were collected by entering a game session, waiting for the game to
 start, and then leaving without playing repeatedly for around 325 games. After all of
-the games were collected, the replay feature on Hypixel was utilized in order to
+the games were collected, the replay feature on *Hypixel* was utilized in order to
 determine the 8 minigames chosen in each individual game. This approach avoided the time
 cost of completing all 8 minigames per game while still efficiently collecting the full
 minigame sequence.
@@ -69,7 +76,7 @@ were removed before statistical testing. After removing 44 incomplete or incorre
 recorded games, 3,318 games remained for statistical analysis, representing 26,544
 individual minigame observations (3,318 games $\times$ 8 minigames per game).
 
-### 2.2 Dataset structure
+### 2.2 Dataset Structure
 
 The collected data was organized into a CSV file containing the following columns:
 
@@ -81,10 +88,12 @@ The collected data was organized into a CSV file containing the following column
 | **timestamp**   | The recorded start time of the game.                |
 | **minigame**    | The name of the selected minigame.                  |
 
+: Dataset Structure and Description of Variables {#tbl-dataset-structure .striped}
+
 Each row represents one minigame observation. This format preserved the original data
 while making it easier to summarize, filter, and analyze the data. 
 
-### 2.3 Statistical analysis
+### 2.3 Statistical Analysis
 The language Python was used along with the libraries numpy and pandas for the
 statistical analysis. Analyses were performed at two different levels: separately for
 each of the 10 individual trials, and for the combined dataset across all trials. This
@@ -132,10 +141,286 @@ $$
 
 This corrected p value accounts for the dependence between minigame selections (a hypergeometric-type process) within a game, unlike the standard chi-square p value, which assumes independence.
 
+To calculate the effect size, the same Monte Carlo simulation values were used to
+evaluate the effect size. The observed Cohen’s $w$ was calculated as:
+
+$$
+w = \sqrt{\frac{\chi^2}{N}}
+$$
+
+where $\chi^2$ is the observed chi-square statistic and $N$ is the number of
+observations. Each simulated chi-square value was similarly converted into a $w$ value,
+creating a null distribution of expected effect sizes under $H_0$. The observed $w$ was
+then reported as a percentile within the simulated distribution to determine the
+magnitude of the observed effect size relative to $H_0$.
+
+
 ## 3 Results
 
+```{python}
+#| label: setup-results
+#| echo: false
+#| cache: true
+
+from rng_analysis.load import load_data
+from rng_analysis.results import results
+from rng_analysis.utils import (
+    calc_games,
+    calc_observations,
+    calc_minigame_counts,
+    calc_mean_frequency,
+    calc_std_frequency,
+    calc_frequency_range
+)
+
+df = load_data()
+trial_dfs = {
+    trial: df[df["trial"] == trial]
+    for trial in df["trial"].unique()
+}
+```
+
+### 3.1 Descriptive Statistics
+
+Data were collected across 10 independent trials, yielding a final sample of $N$ =
+`{python} calc_games(df)` total games. Individual trial sample sizes ranged from
+322 to 342 games. Across the combined dataset, individual minigame selection counts
+ranged from 961 to 1079 ($M$ = `{python} calc_mean_frequency(df)`, $SD$ = 
+`{python} calc_std_frequency(df)`), out of an expected count of $E = N \times 8/26$
+under uniform random selection.
+
+```{python}
+#| label: setup-table-2
+#| echo: false
+#| cache: true
+#| output: asis
+
+data_2 = {
+    trial: {
+        "games": calc_games(trial_dfs[trial]),
+        "observations": calc_observations(trial_dfs[trial]),
+        "mean": calc_mean_frequency(trial_dfs[trial]),
+        "range": calc_frequency_range(trial_dfs[trial]),
+    }
+    for trial in trial_dfs
+}
+
+data_2["Combined"] = {
+    "games": calc_games(df),
+    "observations": calc_observations(df),
+    "mean": calc_mean_frequency(df),
+    "range": calc_frequency_range(df),
+}
 
 
+table_2 = pd.DataFrame.from_dict(data_2, orient="index")
+table_2.reset_index(inplace=True)
+
+table_2["Min Count"] = table_2["range"].str[0]
+table_2["Max Count"] = table_2["range"].str[1]
+
+table_2 = table_2.rename(columns={
+    "index": "Trial",
+    "games": "Games",
+    "observations": "Observations",
+    "mean": "Mean",
+})
+
+table_2 = table_2[
+    ["Trial", "Games", "Observations", "Min Count", "Max Count", "Mean"]
+]
+```
+```{python}
+#| label: table-2
+#| echo: false
+#| output: asis
+
+from IPython.display import Markdown
+
+table_2_md = table_2.to_markdown(
+    index=False, 
+    disable_numparse=True,
+    colalign=["left", "right", "right", "right", "right", "right"]
+)
+
+lines = table_2_md.split("\n")
+
+for i in range(2, len(lines)):
+    parts = lines[i].split("|")
+    if len(parts) > 1:
+        parts[1] = f" **{parts[1].strip()}** "
+        lines[i] = "|".join(parts)
+
+table_2_md = "\n".join(lines)
+
+Markdown(table_2_md)
+```
+
+: Descriptive Statistics for Individual and Combined Trials {#tbl-descriptive .striped}
+
+### 3.2 Primary Analysis: Randomness of Combined Trials
+
+A chi-square goodness of fit was conducted on the combined dataset (3318 games, yielding
+26544 minigame selections) to evaluate whether minigame selection frequencies deviated
+from $H_0$. The observed chi-square statistic was $\chi^2$ =
+`{python} round(results.get("combined.chi_square"), 2)` with an uncorrected p value of
+$p$ = `{python} round(results.get("combined.p_standard"), 4)`; however, as stated in
+Section 2.3, this uncorrected value is inaccurate because the standard chi-square
+assumes complete independent observations. A Monte Carlo simulation was used to correct
+the p value to $p$ = `{python} round(results.get("combined.p_corrected"), 4)`,
+indicating no evidence against the null hypothesis at $\alpha$ = 0.05.
+
+The effect size was quantified by using Cohen’s $w$ ($w_{obs}$ =
+`{python} round(results.get("combined.cohen_w.w_observed"), 4)`), calculated using $N$ =
+`{python} data_2["Combined"]["observations"]` total minigame selections. To account for
+the same dependence structure, $w_{obs}$ was compared to a null distribution of expected
+effect sizes under $H_0$, with $\bar{w}_{sim}$ =
+`{python} round(results.get("combined.cohen_w.w_null_mean"), 4)`  and $SD$ =
+`{python} round(results.get("combined.cohen_w.w_null_sd"), 4)`. This resulted in a
+standardized effect of $z_w$ =
+`{python} round(results.get("combined.cohen_w.z_w"), 4)`, corresponding to the
+`{python} round(results.get("combined.cohen_w.percentile"), 2)`th
+percentile, which is consistent with the non-significant corrected p value.
+
+### 3.3 Secondary Analysis: Consistency Across Individual Trials
+
+To assess whether $H_0$ was consistently supported across independent samples, all of
+the tests were computed separately for each of the 10 trials as described in Section 2.3
+and displayed under Table 3. None of the 10 individual trials produced a statistically
+significant deviation from uniform minigame selection at $\alpha$ = 0.05 (corrected $p$
+range: 0.0780-0.6658).
+
+The standardized effect sizes ($z_w$) ranged from -0.4442 (Trial 3, 33.47th percentile)
+to 1.4415 (Trial 9, 92.23rd percentile). Both of these trials remain well within the
+range expected under random sampling variability, assuming a threshold of $|z_w| > 2$.
+Given that 10 independent trials were conducted at $\alpha$ = 0.05, fewer than one trial
+(~0.46) would be expected to exceed $|z_w| > 2$ purely by chance assuming the null
+distribution. There were no trials exceeding this threshold, supporting the
+conclusion that individual trials behaved consistently with $H_0$, rather than the
+combined result being driven by an anomalous individual trial.
+
+
+```{python}
+#| label: setup-table-3
+#| echo: false
+#| cache: true
+
+data_3 = {
+    trial: {
+        "Trial": trial,
+        "chi_square": results.get(f"trials.{trial}.chi_square"),
+        "p_standard": results.get(f"trials.{trial}.p_standard"),
+        "p_corrected": results.get(f"trials.{trial}.p_corrected"),
+        "w_observed": results.get(f"trials.{trial}.cohen_w.w_observed"),
+        "z_w": results.get(f"trials.{trial}.cohen_w.z_w"),
+        "percentile": results.get(f"trials.{trial}.cohen_w.percentile")
+    }
+    for trial in trial_dfs
+}
+
+table_3 = pd.DataFrame.from_dict(data_3, orient="index")
+table_3.index.name = "Trial"
+
+table_3 = table_3[
+    ["Trial", "chi_square", "p_standard", "p_corrected", "w_observed", "z_w", "percentile"]
+]
+
+format_map = {
+    "chi_square": 2,
+    "p_standard": 4,
+    "p_corrected": 4,
+    "w_observed": 4,
+    "z_w": 4,
+    "percentile": 2,
+}
+for col, decimals in format_map.items():
+    table_3[col] = table_3[col].map(lambda x: f"{x:.{decimals}f}")
+```
+
+```{python}
+#| label: table-3
+#| echo: false
+#| output: asis
+
+from IPython.display import Markdown
+
+column_labels = {
+    "Trial": "Trial",
+    "chi_square": "$\\chi^2$",
+    "p_standard": "$p$",
+    "p_corrected": "$p_{corr}$",
+    "w_observed": "$w_{obs}$",
+    "z_w": "$z_w$",
+    "percentile": "Percentile",
+}
+
+table_3_display = table_3.rename(columns=column_labels)
+
+table_3_md = table_3_display.to_markdown(
+    index=False, 
+    disable_numparse=True,
+    colalign=["left", "right", "right", "right", "right", "right", "right"]
+)
+
+lines = table_3_md.split("\n")
+
+for i in range(2, len(lines)):
+    parts = lines[i].split("|")
+    if len(parts) > 1:
+        parts[1] = f" **{parts[1].strip()}** "
+        lines[i] = "|".join(parts)
+
+table_3_md = "\n".join(lines)
+
+Markdown(table_3_md)
+```
+
+: Statistics for Individual Trials {#tbl-trials-analysis .striped}
+
+### 3.4 Exploratory Analysis
+
+```{python}
+#| label: setup-exploratory
+#| echo: false
+#| cache: true
+from rng_analysis.analysis import calculate_slot_chi_square, calculate_time_chi_square
+
+slot_chi_sq, slot_p_value, slot_dof, slot_expected, slot_cramer_v = calculate_slot_chi_square()
+time_chi_sq, time_p_value, time_dof, time_expected, time_cramer_v = calculate_time_chi_square()
+```
+
+Unlike the primary and secondary analyses above, the following tests were exploratory
+rather than confirmatory. These tests are intended to generate hypotheses for future
+investigation rather than to test pre-determined predictions. Therefore, no correction
+for multiple comparisons was applied, and results should be interpreted with appropriate
+caution.
+
+#### 3.4.1 Slot Position and Minigame Selection
+
+A chi-square test of independence was conducted to explore whether there was a
+correlation between slot positions and minigame selections. Since the lowest cell count
+was 961, assumptions of the standard chi-square test were satisfied. The test indicated
+there was a statistically significant association between slot position and minigame
+selection, $\chi^2$ (`{python} round(slot_dof, 2)`) = `{python} round(slot_chi_sq, 2)`, 
+$p$ = `{python} round(slot_p_value, 4)`. However, the effect size was calculated to be
+negligible (Cramér's $V$ = `{python} round(slot_cramer_v, 4)`), which is well below the
+conventional thresholds for even a small effect. While this suggests that slot positions
+and minigame selections may not be fully independent, the magnitude of this association
+is likely trivial. The low p value may be attributable to the large sample size
+providing high statistical power to detect minor deviations rather than a meaningful
+relationship.
+
+#### 3.4.2 Temporal Patterns in Minigame Selection
+
+Another chi-square test of independence was conducted to explore if there was a
+correlation between the hour of day and minigame selection. Data were collected across
+six different hours of the day (11:00–16:59). Since the lowest cell count was 1552,
+assumptions of the standard chi-square test were satisfied. The test indicated that
+there was no significant correlation between the hour of day and minigame selection,
+$\chi^2$ (`{python} round(time_dof, 4)`) = `{python} round(time_chi_sq, 2)`, $p$ =
+`{python} round(time_p_value, 4)`. The Cramér's $V$ was also calculated to be
+`{python} round(time_cramer_v, 4)`, meaning that the effect size is also negligible,
+supporting the non-significant p value.
 
 ## 4 Discussion
 
