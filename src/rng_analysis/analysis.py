@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from scipy import stats
 
 from rng_analysis.load import load_data
@@ -69,3 +70,39 @@ def calculate_cohen_w(
         "z_w": z_w,
         "percentile": percentile,
     }
+
+def calculate_slot_chi_square() -> tuple[float, float, int, np.ndarray, float]:
+    df = load_data()
+    contingency = pd.crosstab(df["slot"], df["minigame"])
+    chi2, p, dof, expected = stats.chi2_contingency(contingency)
+
+    n = contingency.values.sum()
+    k = min(contingency.shape)
+    cramers_v = np.sqrt(chi2 / (n * (k - 1)))
+
+    return (
+        float(chi2), # type: ignore
+        float(p), # type: ignore
+        int(dof), # type: ignore
+        np.asarray(expected),
+        float(cramers_v)
+    )
+
+def calculate_time_chi_square() -> tuple[float, float, int, np.ndarray, float]:
+    df = load_data()
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df["time_bucket"] = df["timestamp"].dt.hour
+    contingency = pd.crosstab(df["time_bucket"], df["minigame"])
+    chi2, p, dof, expected = stats.chi2_contingency(contingency)
+
+    n = contingency.values.sum()
+    k = min(contingency.shape)
+    cramers_v = np.sqrt(chi2 / (n * (k - 1)))
+
+    return (
+        float(chi2), # type: ignore
+        float(p), # type: ignore
+        int(dof), # type: ignore
+        np.asarray(expected),
+        float(cramers_v),
+    )
