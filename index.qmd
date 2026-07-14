@@ -13,6 +13,28 @@ format:
 import pandas as pd
 ```
 
+## Abstract
+
+Random selection is a common mechanic in video games, and perceived unfairness in
+supposedly random systems can affect player trust, even if there is no true bias. This
+study examined the minigame selection in the video game *Hypixel Party Games* to
+determine whether the system followed an expected uniform distribution assuming random
+selection. Data were collected across 10 trials, yielding a combined sample of 3,318
+games, each involving a random selection of 8 of 26 possible minigames. A chi-square
+goodness of fit test was used to assess whether minigame selection followed a uniform
+distribution, along with a Monte Carlo simulation to correct for the dependence
+introduced by the without-replacement selection process. Exploratory analyses used
+chi-square tests of independence to examine potential associations between minigame
+selection and slot position or hour of day The results revealed that there were no
+significant results for the combined dataset (corrected $p$ = 0.1676) and individual
+trial analyses (corrected $p$ range: 0.0780-0.6658) at $\alpha$ = 0.05. Negligible
+effect sizes were also reported for the combined dataset ($w_{obs}$ = 0.0293), landing
+in the 83.24th percentile of simulated tests. Exploratory analyses found a statistically
+significant but negligible association between slot position and minigame selection
+(Cramér's $V$ = 0.0346), and no significant association with hour of day. These findings
+suggest that the selection of minigames appears to be consistent with genuine random
+sampling. 
+
 ## 1 Introduction
 
 Randomness is an essential component of many modern video games. From determining item
@@ -26,12 +48,13 @@ bias or random variation.
 
 One application of this question is in the video game *Hypixel Party Games*, where
 players have speculated whether certain minigames were selected more than others. This
-video game features 26 possible minigames, which 8 are selected per game session, each
-theoretically having an equal chance of being selected. Using 10 independent samples
-with around 325 games (2600 minigame selections) per sample, this analysis tests whether
-the observed distribution is consistent with this expectation. If the game’s selection
-was random, each minigame should appear at the expected frequency over a large amount of
-games. The hypotheses are: 
+video game features 26 possible minigames, of which 8 are selected per game session,
+each theoretically having an equal chance of being selected. Throughout this paper,
+*game* refers to one such match rather than the video game itself. Using 10 independent
+samples with around 325 games (2600 minigame selections) per sample, this analysis tests
+whether the observed distribution is consistent with this expectation. If the video
+game’s selection was random, each minigame should appear at the expected frequency over
+a large amount of games. The hypotheses are: 
 
 * **Null hypothesis ($H_0$)**: The distribution of minigame selections follows the
 expected uniform distribution under random selection. 
@@ -425,7 +448,7 @@ caution.
 #### 3.4.1 Slot Position and Minigame Selection
 
 A chi-square test of independence was conducted to explore whether there was a
-correlation between slot positions and minigame selections. Since the lowest cell count
+association between slot positions and minigame selections. Since the lowest cell count
 was 961, assumptions of the standard chi-square test were satisfied. The test indicated
 there was a statistically significant association between slot position and minigame
 selection, $\chi^2$ (`{python} round(slot_dof, 2)`) = `{python} round(slot_chi_sq, 2)`, 
@@ -440,10 +463,10 @@ relationship.
 #### 3.4.2 Temporal Patterns in Minigame Selection
 
 Another chi-square test of independence was conducted to explore if there was a
-correlation between the hour of day and minigame selection. Data were collected across
+association between the hour of day and minigame selection. Data were collected across
 six different hours of the day (11:00–16:59). Since the lowest cell count was 1552,
 assumptions of the standard chi-square test were satisfied. The test indicated that
-there was no significant correlation between the hour of day and minigame selection,
+there was no significant association between the hour of day and minigame selection,
 $\chi^2$ (`{python} round(time_dof, 4)`) = `{python} round(time_chi_sq, 2)`, $p$ =
 `{python} round(time_p_value, 4)`. The Cramér's $V$ was also calculated to be
 `{python} round(time_cramer_v, 4)`, meaning that the effect size is also negligible,
@@ -542,4 +565,24 @@ pattern.
 
 ## 5 Conclusion
 
+This study investigated whether the minigame selection system in *Hypixel Party Games*
+produced outcomes consistent with random selection. It was found that there were no
+statistically significant deviations from an expected uniform distribution, supporting
+$H_0$ with both the individual trials and combined dataset. These findings carry a
+broader significance beyond this specific game; humans are prone to the clustering
+illusion, which is a specific form of apophenia: the broader tendency to perceive
+meaningful patterns in random data. The clustering illusion specifically refers to
+random streaks or repeated outcomes that are mistakenly interpreted as evidence of an
+underlying pattern or bias, possibly leading players to believe that a video game is
+biased toward certain outcomes. Without rigorous statistical testing, such perceptions
+can go unchallenged, potentially shaping player trust or behavior based on an illusion
+rather than evidence. This experiment demonstrates how statistical methods can directly
+address that gap, offering an objective standard to test these perceptions.
 
+Although this study focused on a singular video game, the methods used could be
+applicable to many other randomized systems, such as lotteries, shuffling algorithms, or
+any process claiming fairness through randomness. Statistical analysis provides an
+objective way to distinguish genuine bias from patterns that random variation may
+produce, allowing claims of randomness to be evaluated accurately. In systems where
+fairness and trust depend on genuine randomness, this kind of rigorous testing offers a
+meaningful safeguard against both unfounded suspicion and undetected bias alike.
