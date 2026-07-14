@@ -94,6 +94,7 @@ Each row represents one minigame observation. This format preserved the original
 while making it easier to summarize, filter, and analyze the data. 
 
 ### 2.3 Statistical Analysis
+
 The language Python was used along with the libraries numpy and pandas for the
 statistical analysis. Analyses were performed at two different levels: separately for
 each of the 10 individual trials, and for the combined dataset across all trials. This
@@ -106,6 +107,8 @@ while the alternate hypothesis states that at least one minigame has a selection
 probability of $p_i \neq 1/26$. These hypotheses were evaluated separately for each
 individual trial and for the combined dataset. A significance level of $\alpha = 0.05$
 was used in all tests.
+
+#### 2.3.1 Chi-Square Goodness Of Fit Testing
 
 A chi-square goodness of fit was utilized in order to compare whether the observed
 distribution significantly differs from $H_0$:
@@ -125,6 +128,8 @@ observations into the statistical test, reducing the variation within the distri
 causing the value of the chi-square statistic ($\chi^2$) to decrease while inflating the
 standard p value.
 
+#### 2.3.2 Monte Carlo Correction for Dependence
+
 In order to account for this, a Monte Carlo simulation was performed to approximate the
 value of $\chi^2$ performed under the null hypothesis. The simulation repeatedly
 generated $N$ simulated games (100,000 iterations per test), where $N$ matched the
@@ -141,6 +146,8 @@ $$
 
 This corrected p value accounts for the dependence between minigame selections (a hypergeometric-type process) within a game, unlike the standard chi-square p value, which assumes independence.
 
+#### 2.3.3 Effect Size (Cohen's $w$)
+
 To calculate the effect size, the same Monte Carlo simulation values were used to
 evaluate the effect size. The observed Cohen’s $w$ was calculated as:
 
@@ -154,6 +161,27 @@ creating a null distribution of expected effect sizes under $H_0$. The observed 
 then reported as a percentile within the simulated distribution to determine the
 magnitude of the observed effect size relative to $H_0$.
 
+#### 2.3.4 Exploratory Analyses
+
+In addition to the analyses described above, exploratory analyses were conducted to
+examine whether minigame selections were impacted by slot position (1-8) or the hour of
+day during which the game was played. Since these analyses were exploratory, no
+correction for multiple comparisons was applied. These relationships were evaluated
+using the chi-square test of independence, being applied to contingency tables of slot
+position by minigame and hour of day by minigame, respectively. Unlike the goodness of
+fit test explained above for the main analysis, this test evaluates whether two
+categorical variables are associated with one another. Effect size for these tests was
+quantified using Cramér's $V$:
+
+$$ 
+V = \sqrt{\frac{\chi^2}{N(k-1)}} 
+$$
+
+where $N$ represents the total number of observations, and $k$ is the smaller number of
+row or column categories in the contingency table. As with the primary analysis, the
+dependent aspect within the minigame selection process introduces issues with using the
+chi-square test of independence; however, due to the exploratory nature of these
+analyses, this dependence was not further corrected for in this report.
 
 ## 3 Results
 
@@ -212,7 +240,6 @@ data_2["Combined"] = {
     "range": calc_frequency_range(df),
 }
 
-
 table_2 = pd.DataFrame.from_dict(data_2, orient="index")
 table_2.reset_index(inplace=True)
 
@@ -230,6 +257,7 @@ table_2 = table_2[
     ["Trial", "Games", "Observations", "Min Count", "Max Count", "Mean"]
 ]
 ```
+
 ```{python}
 #| label: table-2
 #| echo: false
@@ -265,7 +293,7 @@ A chi-square goodness of fit was conducted on the combined dataset (3318 games, 
 from $H_0$. The observed chi-square statistic was $\chi^2$ =
 `{python} round(results.get("combined.chi_square"), 2)` with an uncorrected p value of
 $p$ = `{python} round(results.get("combined.p_standard"), 4)`; however, as stated in
-Section 2.3, this uncorrected value is inaccurate because the standard chi-square
+Section 2.3.1, this uncorrected value is inaccurate because the standard chi-square
 assumes complete independent observations. A Monte Carlo simulation was used to correct
 the p value to $p$ = `{python} round(results.get("combined.p_corrected"), 4)`,
 indicating no evidence against the null hypothesis at $\alpha$ = 0.05.
@@ -298,7 +326,6 @@ Given that 10 independent trials were conducted at $\alpha$ = 0.05, fewer than o
 distribution. There were no trials exceeding this threshold, supporting the
 conclusion that individual trials behaved consistently with $H_0$, rather than the
 combined result being driven by an anomalous individual trial.
-
 
 ```{python}
 #| label: setup-table-3
