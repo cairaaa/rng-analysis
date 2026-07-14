@@ -451,7 +451,95 @@ supporting the non-significant p value.
 
 ## 4 Discussion
 
+This study examined whether minigame selection in *Hypixel Party Games* behaves
+consistently with a uniform random process, using combined and individual-trial goodness
+of fit tests. Across the combined dataset and all 10 individual trials, none showed a
+statistically significant deviation from uniform minigame selection. Exploratory
+analyses found a statistically significant, but practically negligible, correlation
+between slot and minigame selection, and no significant association between the hour of
+day and minigame selection.
 
+### 4.1 Interpretation of Primary and Secondary Results
 
+The consistency of the results in the combined dataset strengthens confidence that the
+minigame selection behaves as a uniform random process. As well, the consistency
+observed across analyzing the 10 individual trials further supported the idea that $H_0$
+is true, rather than the apparent distribution relying on aggregating enough data to
+average out inconsistencies. This distinction has practical significance: if individual
+trials had shown meaningfully different behavior from the combined result, it would
+suggest the selection mechanism may behave unpredictably or inconsistently under certain
+external conditions. This would undermine the player's trust even if the aggregated data
+looked consistent on average. The fact that none of the trials nor the combined dataset
+showed a meaningful deviation from $H_0$, and the pattern matched what would be expected
+from a properly designed uniform random draw, supports the conclusion that the
+underlying selection algorithm is consistent with a uniform random process.
+
+### 4.2 Interpretation of Exploratory Findings
+
+The exploratory findings represent a useful illustration of a common pitfall in
+statistical interpretation: a result can still be statistically significant, while being
+practically meaningless, due to the high power that large sample sizes provide in order
+to detect trivial deviations. Rather than suggesting a genuine design flaw or bias in
+how minigames are assigned to slot positions, the slot-position finding more likely
+reflects the sensitivity of chi-square tests at scale. This distinction is worth
+highlighting as a reading of just the p value alone without the effect size could lead
+to an unwarranted claim that the video game’s slot assignment is meaningfully biased,
+when the actual magnitude of this bias is completely negligible. This highlights the
+importance of reporting effect sizes along with significant p values, especially in
+exploratory work where a significant result may be misinterpreted.
+
+### 4.3 Limitations
+
+Several limitations should be considered when interpreting these results. Firstly, the
+most important limitation is that the structure of a game introduces dependence between
+observations, violating a core assumption of the chi-square goodness of fit test. While
+this was addressed in the primary and secondary analyses through a Monte Carlo
+simulation designed to approximate the correct null distribution under this dependence
+structure, this correction relies on the assumption that the simulation accurately
+mirrors the true selection mechanism. Any possible unmodeled or inaccurate aspect of the
+Monte Carlo simulation could make the p values and effect sizes reported unreliable.
+
+Additionally, while the 10 trials examined in this study were collected independently in
+the sense of being separate data collection sessions, they might not fully represent
+other possible underlying conditions (e.g., different players, time period, etc.).
+Demonstrating consistency across trials under similar circumstances shows that the
+selection process behaves reliably under those specific conditions, but does not
+establish that this consistency would transfer to other varied contexts.
+
+Finally, the exploratory analyses which analyzed slot and hour of day were not corrected
+for multiple comparisons nor for the same dependence structure addressed in the primary
+and secondary analyses. Therefore, the results may introduce inaccuracy into this
+analysis, and should be treated with appropriate caution.
+
+### 4.4 Future Directions
+
+Several directions for future research can follow directly from the limitations
+discussed above. First, since the Monte Carlo correction used in this study relies on
+the assumption that the simulation accurately reflects the actual selection mechanism,
+future work could try to validate and strengthen this assumption by applying additional,
+independent statistical tests that assess different notions of randomness. A possible
+statistical test that could be performed could be a categorical serial test to determine
+whether a certain minigame selection changes the probability of a future minigame being
+chosen. Agreement across multiple, methodologically distinct tests would provide
+stronger indirect evidence of genuine randomness than a single test would establish on
+its own.
+
+Second, because the 10 trials in this study may not have captured different underlying
+conditions, future studies could deliberately collect data across a wider range of
+contexts. Some examples could include collecting data using different accounts, playing
+at a larger variety of hours, and playing on different versions. These different
+circumstances could influence the results collected and confirm whether the consistency
+observed holds more broadly, or if it is only specific to the conditions to which this
+data was collected.
+
+Finally, the exploratory analyses, particularly the slot and minigame selection
+analysis, could warrant a follow-up study. Such a study could be designed specifically
+to test this relationship as a primary hypothesis, with an appropriately corrected
+significance threshold and a Monte Carlo correction accounting for the same dependence
+structure addressed in the primary and secondary analyses. This would allow for a more
+conclusive determination of whether this association reflects a genuine, reproducible
+pattern.
 
 ## 5 Conclusion
+
+
