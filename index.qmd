@@ -25,7 +25,7 @@ goodness of fit test was used to assess whether minigame selection followed a un
 distribution, along with a Monte Carlo simulation to correct for the dependence
 introduced by the without-replacement selection process. Exploratory analyses used
 chi-square tests of independence to examine potential associations between minigame
-selection and slot position or hour of day The results revealed that there were no
+selection and slot position or hour of day. The results revealed that there were no
 significant results for the combined dataset (corrected $p$ = 0.1676) and individual
 trial analyses (corrected $p$ range: 0.0780-0.6658) at $\alpha$ = 0.05. Negligible
 effect sizes were also reported for the combined dataset ($w_{obs}$ = 0.0293), landing
@@ -447,7 +447,7 @@ caution.
 
 #### 3.4.1 Slot Position and Minigame Selection
 
-A chi-square test of independence was conducted to explore whether there was a
+A chi-square test of independence was conducted to explore whether there was an
 association between slot positions and minigame selections. Since the lowest cell count
 was 961, assumptions of the standard chi-square test were satisfied. The test indicated
 there was a statistically significant association between slot position and minigame
@@ -462,7 +462,7 @@ relationship.
 
 #### 3.4.2 Temporal Patterns in Minigame Selection
 
-Another chi-square test of independence was conducted to explore if there was a
+Another chi-square test of independence was conducted to explore if there was an
 association between the hour of day and minigame selection. Data were collected across
 six different hours of the day (11:00–16:59). Since the lowest cell count was 1552,
 assumptions of the standard chi-square test were satisfied. The test indicated that
